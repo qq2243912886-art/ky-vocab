@@ -1,15 +1,14 @@
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
 <meta charset="UTF-8">
-<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=no, viewport-fit=cover">
 <meta name="apple-mobile-web-app-capable" content="yes">
 <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
-<meta name="apple-mobile-web-app-title" content="鑰冪爺璇嶆眹">
+<meta name="apple-mobile-web-app-title" content="考研词汇">
 <meta name="theme-color" content="#0f0f1a">
 <meta name="mobile-web-app-capable" content="yes">
-<title>2027鑰冪爺鑻辫浜?- 鑹惧娴╂柉鍗＄墖鑳岃</title>
+<title>2027考研英语二 - 艾宾浩斯卡片背诵</title>
 <style>
 :root {
   --bg: #0f0f1a; --card-bg: #1a1a2e; --card-front: #16213e;
@@ -17,762 +16,511 @@
   --accent-glow: rgba(99,102,241,0.3); --success: #10b981; --danger: #ef4444;
   --success-bg: rgba(16,185,129,0.1); --danger-bg: rgba(239,68,68,0.1);
   --t1: #f87171; --t2: #fbbf24; --t3: #9ca3af;
-  --radius: 16px; --radius-sm: 10px;
+  --radius: 16px;
   --shadow: 0 4px 24px rgba(0,0,0,0.3);
   --transition: 0.4s cubic-bezier(0.4, 0, 0.2, 1);
 }
-* { margin: 0; padding: 0; box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-body {
-  font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Noto Sans SC", "PingFang SC", "Microsoft YaHei", sans-serif;
-  background: var(--bg); color: var(--text); min-height: 100vh;
-  display: flex; flex-direction: column; align-items: center; overflow-x: hidden;
-  padding-top: env(safe-area-inset-top); padding-bottom: env(safe-area-inset-bottom);
-}
-@media (display-mode: standalone) {
-  body { padding-top: 12px; }
-}
-.top-bar { width:100%;max-width:600px;padding:16px 20px 0;display:flex;align-items:center;justify-content:space-between; }
-.top-bar h1 { font-size:1rem;font-weight:600;color:var(--sub); }
-.top-bar .stats { font-size:0.82rem;color:var(--sub);display:flex;gap:12px; }
-.top-bar .stats span { white-space:nowrap; }
-.top-bar .stats .done-num { color:var(--success);font-weight:600; }
-.top-bar .stats .total-num { color:var(--accent);font-weight:600; }
-.progress-wrap { width:100%;max-width:600px;padding:8px 20px; }
-.progress-bar { height:4px;background:#2d2d44;border-radius:2px;overflow:hidden; }
-.progress-fill { height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:2px;transition:width 0.5s ease; }
-.filters { width:100%;max-width:600px;padding:12px 20px;display:flex;gap:6px;flex-wrap:wrap; }
-.filter-btn { padding:6px 14px;border-radius:20px;border:1px solid #3d3d5c;background:transparent;color:var(--sub);font-size:0.78rem;cursor:pointer;transition:all 0.2s;white-space:nowrap; }
-.filter-btn:hover { border-color:var(--accent);color:var(--text); }
-.filter-btn.active { background:var(--accent);border-color:var(--accent);color:#fff; }
-.day-panel { width:100%;max-width:600px;padding:10px 20px;display:grid;grid-template-columns:repeat(auto-fit, minmax(100px, 1fr));gap:8px;margin-top:4px; }
-.day-stat { background:rgba(99,102,241,0.06);border:1px solid #2d2d5c;border-radius:10px;padding:10px 12px;text-align:center; }
-.day-stat .val { font-size:1.2rem;font-weight:700;color:var(--accent); }
-.day-stat .val.new { color:#60a5fa; }
-.day-stat .val.review { color:#f59e0b; }
-.day-stat .val.done-count { color:var(--success); }
-.day-stat .lbl { font-size:0.68rem;color:var(--sub);margin-top:2px; }
-.day-settings { width:100%;max-width:600px;padding:0 20px 8px;display:flex;align-items:center;gap:10px;flex-wrap:wrap; }
-.day-settings label { font-size:0.75rem;color:var(--sub);white-space:nowrap; }
-.day-settings input { width:60px;padding:5px 8px;border-radius:6px;border:1px solid #3d3d5c;background:#0f0f1a;color:var(--text);font-size:0.8rem;text-align:center;outline:none; }
-.day-settings input:focus { border-color:var(--accent); }
-.day-settings .hint { font-size:0.7rem;color:#6d6d8c; }
-.stage-badge { font-size:0.65rem;padding:2px 8px;border-radius:8px;font-weight:600;display:inline-block; }
-.stage-badge.new { background:rgba(96,165,250,0.15);color:#60a5fa; }
-.stage-badge.review { background:rgba(245,158,11,0.15);color:#f59e0b; }
-.stage-badge.mastered { background:rgba(16,185,129,0.15);color:var(--success); }
-.day-nav-section { width:100%;max-width:600px;padding:4px 20px 8px;display:flex;align-items:center;gap:6px;flex-wrap:wrap; }
-.day-nav-section .nav-label { font-size:0.72rem;color:var(--sub);white-space:nowrap; }
-.day-nav-dot { width:28px;height:28px;border-radius:50%;border:1px solid #3d3d5c;background:transparent;color:var(--sub);font-size:0.62rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;flex-shrink:0; }
-.day-nav-dot:hover { border-color:var(--accent); }
-.day-nav-dot.active { background:var(--accent);border-color:var(--accent);color:#fff; }
-.day-nav-dot.today { border-color:var(--accent);box-shadow:0 0 8px rgba(99,102,241,0.4); }
-.day-nav-dot.done { border-color:var(--success);background:var(--success-bg);color:var(--success); }
-.day-nav-dot.partial { border-color:#f59e0b; }
-.day-panel-wrap { }
-.card-area { width:100%;max-width:600px;padding:8px 20px;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;perspective:1200px; }
-.card { width:100%;max-width:400px;aspect-ratio:3/4;position:relative;transform-style:preserve-3d;transition:transform var(--transition);cursor:pointer;-webkit-tap-highlight-color:transparent; }
-.card.flipped { transform:rotateY(180deg); }
-.card-face { position:absolute;inset:0;border-radius:var(--radius);backface-visibility:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;box-shadow:var(--shadow);overflow:hidden; }
-.card-front { background:var(--card-front);border:1px solid #2d2d5c;z-index:2; }
-.card-back { background:#1a1a2e;border:1px solid #3d3d4c;transform:rotateY(180deg); }
-.card-front::before,.card-back::before { content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle at 50% 50%, var(--accent-glow), transparent 60%);opacity:0.3;pointer-events:none; }
-.tier-badge { position:absolute;top:16px;left:16px;padding:3px 10px;border-radius:12px;font-size:0.7rem;font-weight:600;z-index:1; }
-.tier-badge.t1 { background:rgba(248,113,113,0.15);color:var(--t1); }
-.tier-badge.t2 { background:rgba(251,191,36,0.15);color:var(--t2); }
-.tier-badge.t3 { background:rgba(156,163,175,0.15);color:var(--t3); }
-.word-index { position:absolute;top:16px;right:20px;font-size:0.75rem;color:#4d4d6c;font-weight:500; }
-.card-front .english { font-size:2.4rem;font-weight:700;letter-spacing:0.02em;text-align:center;word-break:break-word;line-height:1.3;color:#fff;text-shadow:0 0 40px rgba(99,102,241,0.4); }
-.card-front .hint { margin-top:16px;font-size:0.75rem;color:#4d4d6c;display:flex;align-items:center;gap:6px; }
-.speaker-btn { position:absolute;top:44px;right:16px;width:36px;height:36px;border-radius:50%;border:1px solid #3d3d5c;background:transparent;color:var(--accent);font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;z-index:3;-webkit-tap-highlight-color:transparent; }
-.speaker-btn:hover { background:rgba(99,102,241,0.1);border-color:var(--accent); }
-.speaker-btn.speaking { background:var(--accent);color:#fff;border-color:var(--accent);animation:speakPulse 0.6s ease; }
-@keyframes speakPulse { 0%,100%{box-shadow:0 0 0 0 rgba(99,102,241,0.4);} 50%{box-shadow:0 0 0 8px rgba(99,102,241,0);} }
-.card-back .chinese { font-size:1.15rem;line-height:1.8;text-align:center;color:var(--text);max-height:70%;overflow-y:auto; }
-.card-back .chinese::-webkit-scrollbar { width:3px; }
-.card-back .chinese::-webkit-scrollbar-thumb { background:#3d3d5c;border-radius:2px; }
-.card-back .english-sm { font-size:1.1rem;font-weight:600;color:var(--accent);margin-bottom:16px;word-break:break-word;text-align:center; }
-.actions-row { display:flex;gap:12px;margin-top:24px;width:100%;max-width:400px;justify-content:center;flex-wrap:wrap; }
-.btn { padding:12px 28px;border-radius:28px;font-size:0.9rem;font-weight:600;cursor:pointer;border:none;transition:all 0.2s;-webkit-tap-highlight-color:transparent;user-select:none;display:flex;align-items:center;gap:6px; }
-.btn-know { background:var(--success);color:#fff;box-shadow:0 4px 16px rgba(16,185,129,0.3); }
-.btn-know:hover { transform:translateY(-2px);box-shadow:0 6px 24px rgba(16,185,129,0.4); }
-.btn-unknow { background:transparent;color:var(--danger);border:1px solid rgba(239,68,68,0.4); }
-.btn-unknow:hover { background:var(--danger-bg);border-color:var(--danger); }
-.btn-reset { background:transparent;color:var(--sub);border:1px solid #3d3d5c;padding:8px 16px;font-size:0.8rem;font-weight:500; }
-.btn-reset:hover { border-color:#6d6d8c;color:var(--text); }
-.btn-auth { background:transparent;color:var(--accent);border:1px solid rgba(99,102,241,0.4);padding:8px 16px;font-size:0.8rem;font-weight:500; }
-.btn-auth:hover { background:rgba(99,102,241,0.1);border-color:var(--accent); }
-.user-info { font-size:0.78rem;color:var(--sub);display:flex;align-items:center;gap:8px; }
-.user-info .email { color:var(--accent);max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap; }
-.modal-overlay { position:fixed;inset:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:1000;backdrop-filter:blur(4px); }
-.modal { background:var(--card-bg);border:1px solid #3d3d5c;border-radius:var(--radius);padding:32px 24px;width:90%;max-width:360px;box-shadow:0 8px 40px rgba(0,0,0,0.5); }
-.modal h2 { font-size:1.1rem;margin-bottom:20px;text-align:center; }
-.modal .field { margin-bottom:14px; }
-.modal .field label { display:block;font-size:0.78rem;color:var(--sub);margin-bottom:4px; }
-.modal .field input { width:100%;padding:10px 14px;border-radius:8px;border:1px solid #3d3d5c;background:#0f0f1a;color:var(--text);font-size:0.9rem;outline:none;transition:border-color 0.2s; }
-.modal .field input:focus { border-color:var(--accent); }
-.modal .btn-row { display:flex;gap:8px;margin-top:20px; }
-.modal .btn-row .btn { flex:1;padding:10px;font-size:0.85rem;border-radius:10px; }
-.modal .btn-primary { background:var(--accent);color:#fff;border:none;cursor:pointer; }
-.modal .btn-primary:hover { background:var(--accent2); }
-.modal .btn-ghost { background:transparent;color:var(--sub);border:1px solid #3d3d5c;cursor:pointer; }
-.modal .switch-link { text-align:center;margin-top:12px;font-size:0.78rem;color:var(--sub); }
-.modal .switch-link a { color:var(--accent);cursor:pointer;text-decoration:underline; }
-.modal .error-msg { color:var(--danger);font-size:0.75rem;margin-top:8px;text-align:center;min-height:18px; }
-.modal .success-msg { color:var(--success);font-size:0.75rem;margin-top:8px;text-align:center;min-height:18px; }
-.sync-status { font-size:0.68rem;color:var(--success);display:flex;align-items:center;gap:4px; }
-.sync-status.offline { color:var(--sub); }
-.nav-row { display:flex;align-items:center;gap:16px;margin:12px 0; }
-.nav-btn { width:44px;height:44px;border-radius:50%;border:1px solid #3d3d5c;background:transparent;color:var(--sub);font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;-webkit-tap-highlight-color:transparent; }
-.nav-btn:hover { border-color:var(--accent);color:var(--accent); }
-.nav-btn:disabled { opacity:0.3;cursor:default; }
-.card-counter { font-size:0.8rem;color:#4d4d6c; }
-.footer { text-align:center;padding:16px;color:#4d4d6c;font-size:0.7rem;width:100%;max-width:600px; }
-@media (max-width:480px) { .card { max-width:320px; } .card-front .english { font-size:1.8rem; } .card-back .chinese { font-size:1rem; } .btn { padding:10px 20px;font-size:0.82rem; } .filter-btn { padding:5px 10px;font-size:0.7rem; } }
-.flash-green { animation:flashG 0.6s ease; }
-@keyframes flashG { 0%,100%{box-shadow:var(--shadow);} 50%{box-shadow:0 0 32px rgba(16,185,129,0.6);} }
-.flash-red { animation:flashR 0.6s ease; }
-@keyframes flashR { 0%,100%{box-shadow:var(--shadow);} 50%{box-shadow:0 0 32px rgba(239,68,68,0.6);} }
-.slide-left { animation:slideL 0.35s ease forwards; }
-@keyframes slideL { to{transform:translateX(-120%) rotate(-8deg);opacity:0;} }
-.slide-right { animation:slideR 0.35s ease forwards; }
-@keyframes slideR { to{transform:translateX(120%) rotate(8deg);opacity:0;} }
+* { margin:0;padding:0;box-sizing:border-box;-webkit-tap-highlight-color:transparent; }
+body { font-family:-apple-system,BlinkMacSystemFont,"Segoe UI",Roboto,"Noto Sans SC","PingFang SC","Microsoft YaHei",sans-serif; background:var(--bg); color:var(--text); min-height:100vh; display:flex; flex-direction:column; align-items:center; overflow-x:hidden; padding-top:env(safe-area-inset-top); padding-bottom:env(safe-area-inset-bottom); }
+@media (display-mode:standalone) { body{padding-top:12px;} }
+.top-bar{width:100%;max-width:600px;padding:16px 20px 0;display:flex;align-items:center;justify-content:space-between;}
+.top-bar h1{font-size:1rem;font-weight:600;color:var(--sub);}
+.stats{font-size:0.82rem;color:var(--sub);display:flex;gap:12px;}
+.stats span{white-space:nowrap;}
+.done-num{color:var(--success);font-weight:600;}
+.total-num{color:var(--accent);font-weight:600;}
+.progress-wrap{width:100%;max-width:600px;padding:8px 20px;}
+.progress-bar{height:4px;background:#2d2d44;border-radius:2px;overflow:hidden;}
+.progress-fill{height:100%;background:linear-gradient(90deg,var(--accent),var(--accent2));border-radius:2px;transition:width 0.5s ease;}
+.filters{width:100%;max-width:600px;padding:12px 20px;display:flex;gap:6px;flex-wrap:wrap;}
+.filter-btn{padding:6px 14px;border-radius:20px;border:1px solid #3d3d5c;background:transparent;color:var(--sub);font-size:0.78rem;cursor:pointer;transition:all 0.2s;white-space:nowrap;}
+.filter-btn:hover{border-color:var(--accent);color:var(--text);}
+.filter-btn.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+.day-panel{width:100%;max-width:600px;padding:10px 20px;display:grid;grid-template-columns:repeat(auto-fit,minmax(100px,1fr));gap:8px;margin-top:4px;}
+.day-stat{background:rgba(99,102,241,0.06);border:1px solid #2d2d5c;border-radius:10px;padding:10px 12px;text-align:center;}
+.day-stat .val{font-size:1.2rem;font-weight:700;color:var(--accent);}
+.day-stat .val.new{color:#60a5fa;}
+.day-stat .val.review{color:#f59e0b;}
+.day-stat .val.done-count{color:var(--success);}
+.day-stat .lbl{font-size:0.68rem;color:var(--sub);margin-top:2px;}
+.day-settings{width:100%;max-width:600px;padding:0 20px 8px;display:flex;align-items:center;gap:10px;flex-wrap:wrap;}
+.day-settings label{font-size:0.75rem;color:var(--sub);white-space:nowrap;}
+.day-settings input{width:60px;padding:5px 8px;border-radius:6px;border:1px solid #3d3d5c;background:#0f0f1a;color:var(--text);font-size:0.8rem;text-align:center;outline:none;}
+.day-settings input:focus{border-color:var(--accent);}
+.day-settings .hint{font-size:0.7rem;color:#6d6d8c;}
+.stage-badge{font-size:0.65rem;padding:2px 8px;border-radius:8px;font-weight:600;display:inline-block;}
+.stage-badge.new{background:rgba(96,165,250,0.15);color:#60a5fa;}
+.stage-badge.review{background:rgba(245,158,11,0.15);color:#f59e0b;}
+.stage-badge.mastered{background:rgba(16,185,129,0.15);color:var(--success);}
+.day-nav-section{width:100%;max-width:600px;padding:4px 20px 8px;display:flex;align-items:center;gap:6px;flex-wrap:wrap;}
+.day-nav-section .nav-label{font-size:0.72rem;color:var(--sub);white-space:nowrap;}
+.day-nav-dot{width:28px;height:28px;border-radius:50%;border:1px solid #3d3d5c;background:transparent;color:var(--sub);font-size:0.62rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;flex-shrink:0;}
+.day-nav-dot:hover{border-color:var(--accent);}
+.day-nav-dot.active{background:var(--accent);border-color:var(--accent);color:#fff;}
+.day-nav-dot.today{border-color:var(--accent);box-shadow:0 0 8px rgba(99,102,241,0.4);}
+.day-nav-dot.done{border-color:var(--success);background:var(--success-bg);color:var(--success);}
+.day-nav-dot.partial{border-color:#f59e0b;}
+.card-area{width:100%;max-width:600px;padding:8px 20px;flex:1;display:flex;flex-direction:column;align-items:center;justify-content:center;perspective:1200px;}
+.card{width:100%;max-width:400px;aspect-ratio:3/4;position:relative;transform-style:preserve-3d;transition:transform var(--transition);cursor:pointer;-webkit-tap-highlight-color:transparent;}
+.card.flipped{transform:rotateY(180deg);}
+.card-face{position:absolute;inset:0;border-radius:var(--radius);backface-visibility:hidden;display:flex;flex-direction:column;align-items:center;justify-content:center;padding:32px;box-shadow:var(--shadow);overflow:hidden;}
+.card-front{background:var(--card-front);border:1px solid #2d2d5c;z-index:2;}
+.card-back{background:#1a1a2e;border:1px solid #3d3d4c;transform:rotateY(180deg);}
+.card-front::before,.card-back::before{content:'';position:absolute;top:-50%;left:-50%;width:200%;height:200%;background:radial-gradient(circle at 50% 50%,var(--accent-glow),transparent 60%);opacity:0.3;pointer-events:none;}
+.tier-badge{position:absolute;top:16px;left:16px;padding:3px 10px;border-radius:12px;font-size:0.7rem;font-weight:600;z-index:1;}
+.tier-badge.t1{background:rgba(248,113,113,0.15);color:var(--t1);}
+.tier-badge.t2{background:rgba(251,191,36,0.15);color:var(--t2);}
+.tier-badge.t3{background:rgba(156,163,175,0.15);color:var(--t3);}
+.word-index{position:absolute;top:16px;right:20px;font-size:0.75rem;color:#4d4d6c;font-weight:500;}
+.card-front .english{font-size:2.4rem;font-weight:700;letter-spacing:0.02em;text-align:center;word-break:break-word;line-height:1.3;color:#fff;text-shadow:0 0 40px rgba(99,102,241,0.4);}
+.card-front .hint{margin-top:16px;font-size:0.75rem;color:#4d4d6c;display:flex;align-items:center;gap:6px;}
+.speaker-btn{position:absolute;top:44px;right:16px;width:36px;height:36px;border-radius:50%;border:1px solid #3d3d5c;background:transparent;color:var(--accent);font-size:1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;z-index:3;-webkit-tap-highlight-color:transparent;}
+.speaker-btn:hover{background:rgba(99,102,241,0.1);border-color:var(--accent);}
+.speaker-btn.speaking{background:var(--accent);color:#fff;border-color:var(--accent);animation:speakPulse 0.6s ease;}
+@keyframes speakPulse{0%,100%{box-shadow:0 0 0 0 rgba(99,102,241,0.4);}50%{box-shadow:0 0 0 8px rgba(99,102,241,0);}}
+.card-back .chinese{font-size:1.15rem;line-height:1.8;text-align:center;color:var(--text);max-height:70%;overflow-y:auto;}
+.card-back .chinese::-webkit-scrollbar{width:3px;}
+.card-back .chinese::-webkit-scrollbar-thumb{background:#3d3d5c;border-radius:2px;}
+.card-back .english-sm{font-size:1.1rem;font-weight:600;color:var(--accent);margin-bottom:16px;word-break:break-word;text-align:center;}
+.actions-row{display:flex;gap:12px;margin-top:24px;width:100%;max-width:400px;justify-content:center;flex-wrap:wrap;}
+.btn{padding:12px 28px;border-radius:28px;font-size:0.9rem;font-weight:600;cursor:pointer;border:none;transition:all 0.2s;-webkit-tap-highlight-color:transparent;user-select:none;display:flex;align-items:center;gap:6px;}
+.btn-know{background:var(--success);color:#fff;box-shadow:0 4px 16px rgba(16,185,129,0.3);}
+.btn-know:hover{transform:translateY(-2px);box-shadow:0 6px 24px rgba(16,185,129,0.4);}
+.btn-unknow{background:transparent;color:var(--danger);border:1px solid rgba(239,68,68,0.4);}
+.btn-unknow:hover{background:var(--danger-bg);border-color:var(--danger);}
+.btn-reset{background:transparent;color:var(--sub);border:1px solid #3d3d5c;padding:8px 16px;font-size:0.8rem;font-weight:500;}
+.btn-reset:hover{border-color:#6d6d8c;color:var(--text);}
+.btn-auth{background:transparent;color:var(--accent);border:1px solid rgba(99,102,241,0.4);padding:8px 16px;font-size:0.8rem;font-weight:500;}
+.btn-auth:hover{background:rgba(99,102,241,0.1);border-color:var(--accent);}
+.user-info{font-size:0.78rem;color:var(--sub);display:flex;align-items:center;gap:8px;}
+.user-info .email{color:var(--accent);max-width:120px;overflow:hidden;text-overflow:ellipsis;white-space:nowrap;}
+.modal-overlay{position:fixed;inset:0;background:rgba(0,0,0,0.7);display:flex;align-items:center;justify-content:center;z-index:1000;backdrop-filter:blur(4px);}
+.modal{background:var(--card-bg);border:1px solid #3d3d5c;border-radius:var(--radius);padding:32px 24px;width:90%;max-width:360px;box-shadow:0 8px 40px rgba(0,0,0,0.5);}
+.modal h2{font-size:1.1rem;margin-bottom:20px;text-align:center;}
+.modal .field{margin-bottom:14px;}
+.modal .field label{display:block;font-size:0.78rem;color:var(--sub);margin-bottom:4px;}
+.modal .field input{width:100%;padding:10px 14px;border-radius:8px;border:1px solid #3d3d5c;background:#0f0f1a;color:var(--text);font-size:0.9rem;outline:none;transition:border-color 0.2s;}
+.modal .field input:focus{border-color:var(--accent);}
+.modal .btn-row{display:flex;gap:8px;margin-top:20px;}
+.modal .btn-row .btn{flex:1;padding:10px;font-size:0.85rem;border-radius:10px;}
+.modal .btn-primary{background:var(--accent);color:#fff;border:none;cursor:pointer;}
+.modal .btn-primary:hover{background:var(--accent2);}
+.modal .btn-ghost{background:transparent;color:var(--sub);border:1px solid #3d3d5c;cursor:pointer;}
+.modal .switch-link{text-align:center;margin-top:12px;font-size:0.78rem;color:var(--sub);}
+.modal .switch-link a{color:var(--accent);cursor:pointer;text-decoration:underline;}
+.modal .error-msg{color:var(--danger);font-size:0.75rem;margin-top:8px;text-align:center;min-height:18px;}
+.modal .success-msg{color:var(--success);font-size:0.75rem;margin-top:8px;text-align:center;min-height:18px;}
+.sync-status{font-size:0.68rem;color:var(--success);display:flex;align-items:center;gap:4px;}
+.nav-row{display:flex;align-items:center;gap:16px;margin:12px 0;}
+.nav-btn{width:44px;height:44px;border-radius:50%;border:1px solid #3d3d5c;background:transparent;color:var(--sub);font-size:1.1rem;cursor:pointer;display:flex;align-items:center;justify-content:center;transition:all 0.2s;-webkit-tap-highlight-color:transparent;}
+.nav-btn:hover{border-color:var(--accent);color:var(--accent);}
+.nav-btn:disabled{opacity:0.3;cursor:default;}
+.card-counter{font-size:0.8rem;color:#4d4d6c;}
+.footer{text-align:center;padding:16px;color:#4d4d6c;font-size:0.7rem;width:100%;max-width:600px;}
+@media(max-width:480px){.card{max-width:320px;}.card-front .english{font-size:1.8rem;}.card-back .chinese{font-size:1rem;}.btn{padding:10px 20px;font-size:0.82rem;}.filter-btn{padding:5px 10px;font-size:0.7rem;}}
+.flash-green{animation:flashG 0.6s ease;}
+@keyframes flashG{0%,100%{box-shadow:var(--shadow);}50%{box-shadow:0 0 32px rgba(16,185,129,0.6);}}
+.flash-red{animation:flashR 0.6s ease;}
+@keyframes flashR{0%,100%{box-shadow:var(--shadow);}50%{box-shadow:0 0 32px rgba(239,68,68,0.6);}}
+.slide-left{animation:slideL 0.35s ease forwards;}
+@keyframes slideL{to{transform:translateX(-120%) rotate(-8deg);opacity:0;}}
+.slide-right{animation:slideR 0.35s ease forwards;}
+@keyframes slideR{to{transform:translateX(120%) rotate(8deg);opacity:0;}}
 </style>
 </head>
 <body>
-
 <div class="top-bar">
-  <h1>2027 鑰冪爺鑻辫浜?鑹惧娴╂柉鑳岃</h1>
+  <h1>2027 考研英语二 艾宾浩斯背诵</h1>
   <div style="display:flex;align-items:center;gap:16px">
-    <div class="user-info" id="userInfo">
-      <button class="btn btn-auth" onclick="showAuthModal('login')">馃摟 鐧诲綍鍚屾</button>
-    </div>
-    <div class="stats">
-      <span>宸叉帉鎻?<span class="done-num" id="doneNum">0</span></span>
-      <span>/ <span class="total-num" id="totalNum">0</span></span>
-    </div>
+    <div class="user-info" id="userInfo"><button class="btn btn-auth" onclick="showAuthModal('login')">📧 登录同步</button></div>
+    <div class="stats"><span>已掌握 <span class="done-num" id="doneNum">0</span></span><span>/ <span class="total-num" id="totalNum">0</span></span></div>
   </div>
 </div>
-
-<div class="progress-wrap">
-  <div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div>
-</div>
-
+<div class="progress-wrap"><div class="progress-bar"><div class="progress-fill" id="progressFill" style="width:0%"></div></div></div>
 <div class="filters">
-  <button class="filter-btn active" id="studyBtn">馃摉 瀛︿範妯″紡</button>
-  <button class="filter-btn" data-filter="all">鍏ㄩ儴璇嶆眹</button>
-  <button class="filter-btn" data-filter="t1">楂橀鏍稿績</button>
-  <button class="filter-btn" data-filter="t2">閲嶇偣璇嶆眹</button>
-  <button class="filter-btn" data-filter="t3">鍩虹璇嶆眹</button>
-  <button class="filter-btn" data-filter="unmastered">鏈帉鎻?/button>
+  <button class="filter-btn active" id="studyBtn">📖 学习模式</button>
+  <button class="filter-btn" data-filter="all">全部词汇</button>
+  <button class="filter-btn" data-filter="t1">高频核心</button>
+  <button class="filter-btn" data-filter="t2">重点词汇</button>
+  <button class="filter-btn" data-filter="t3">基础词汇</button>
+  <button class="filter-btn" data-filter="unmastered">未掌握</button>
 </div>
-
 <div class="day-panel-wrap" id="dayPanelWrap">
   <div class="day-settings">
-    <label>姣忔棩鏂拌瘝锛?/label>
+    <label>每日新词：</label>
     <input type="number" id="newWordsInput" min="1" max="6547" value="94" onchange="changeNewWordsPerDay()">
-    <span class="hint" id="etaHint">棰勮 70 澶╁畬鎴?/span>
+    <span class="hint" id="etaHint">预计 70 天完成</span>
     <span style="flex:1"></span>
-    <span class="stage-badge new">鏂拌瘝</span>
-    <span class="stage-badge review">澶嶄範</span>
-    <span class="stage-badge mastered">宸叉帉鎻?/span>
+    <span class="stage-badge new">新词</span>
+    <span class="stage-badge review">复习</span>
+    <span class="stage-badge mastered">已掌握</span>
   </div>
   <div class="day-panel" id="dayPanel">
-    <div class="day-stat"><div class="val" id="dayLabel">Day 1</div><div class="lbl">褰撳墠瀛︿範鏃?/div></div>
-    <div class="day-stat"><div class="val new" id="newCount">0</div><div class="lbl">浠婃棩鏂拌瘝</div></div>
-    <div class="day-stat"><div class="val review" id="reviewCount">0</div><div class="lbl">寰呭涔?/div></div>
-    <div class="day-stat"><div class="val done-count" id="sessionDone">0</div><div class="lbl">鏈宸插畬鎴?/div></div>
+    <div class="day-stat"><div class="val" id="dayLabel">Day 1</div><div class="lbl">当前学习日</div></div>
+    <div class="day-stat"><div class="val new" id="newCount">0</div><div class="lbl">今日新词</div></div>
+    <div class="day-stat"><div class="val review" id="reviewCount">0</div><div class="lbl">待复习</div></div>
+    <div class="day-stat"><div class="val done-count" id="sessionDone">0</div><div class="lbl">本次已完成</div></div>
   </div>
   <div class="day-nav-section" id="dayNavSection">
-    <span class="nav-label">璺宠浆鏃ユ湡锛?/span>
+    <span class="nav-label">跳转日期：</span>
     <div id="dayNavDots" style="display:flex;gap:4px;flex-wrap:wrap"></div>
   </div>
 </div>
-
 <div class="card-area">
   <div class="card" id="card" onclick="flipCard()">
     <div class="card-face card-front" id="cardFront">
       <span class="tier-badge" id="tierBadge">T1</span>
       <span class="word-index" id="wordIdx">#1</span>
-      <button class="speaker-btn" id="speakerBtn" onclick="event.stopPropagation();speakWord()" title="鏈楄鍗曡瘝">馃攰</button>
+      <button class="speaker-btn" id="speakerBtn" onclick="event.stopPropagation();speakWord()" title="朗读单词">🔊</button>
       <div class="english" id="engWord">loading...</div>
-      <div class="hint"><span class="stage-badge" id="stageTag"></span> 鐐瑰嚮缈昏浆鏌ョ湅閲婁箟</div>
+      <div class="hint"><span class="stage-badge" id="stageTag"></span> 点击翻转查看释义</div>
     </div>
     <div class="card-face card-back" id="cardBack">
       <span class="tier-badge" id="tierBadge2">T1</span>
-      <button class="speaker-btn" id="speakerBtn2" onclick="event.stopPropagation();speakWord()" title="鏈楄鍗曡瘝">馃攰</button>
+      <button class="speaker-btn" id="speakerBtn2" onclick="event.stopPropagation();speakWord()" title="朗读单词">🔊</button>
       <div class="english-sm" id="engWordSm">loading...</div>
       <div class="chinese" id="chnWord">...</div>
     </div>
   </div>
-
   <div class="nav-row">
-    <button class="nav-btn" id="prevBtn" onclick="prevWord()">鈼€</button>
+    <button class="nav-btn" id="prevBtn" onclick="prevWord()">◀</button>
     <div class="card-counter" id="cardCounter">1 / 0</div>
-    <button class="nav-btn" id="nextBtn" onclick="nextWord()">鈻?/button>
+    <button class="nav-btn" id="nextBtn" onclick="nextWord()">▶</button>
   </div>
-
   <div class="actions-row">
-    <button class="btn btn-unknow" onclick="markUnknown()">馃槙 涓嶈璇?/button>
-    <button class="btn btn-know" onclick="markKnown()">鉁?璁颁綇浜?/button>
+    <button class="btn btn-unknow" onclick="markUnknown()">😕 不认识</button>
+    <button class="btn btn-know" onclick="markKnown()">✅ 记住了</button>
   </div>
-
-  <div style="margin-top:8px">
-    <button class="btn btn-reset" onclick="resetProgress()">娓呴櫎杩涘害</button>
-  </div>
+  <div style="margin-top:8px"><button class="btn btn-reset" onclick="resetProgress()">清除进度</button></div>
 </div>
-
 <div class="footer">
-  <p>绌烘牸 / 鐐瑰嚮鍗＄墖 = 缈昏浆 | 鈫?鈫?= 鍒囨崲 | Y/鈫?= 璁颁綇 | N/鈫?= 涓嶈璇?| F = 鏈楄 | 馃挕 Safari銆屾坊鍔犲埌涓诲睆骞曘€嶅嵆瑁呬负App</p>
+  <p>空格 / 点击卡片 = 翻转 | ← → = 切换 | Y/↑ = 记住 | N/↓ = 不认识 | F = 朗读 | 💡 添加到主屏幕即装为App</p>
 </div>
-
 <div class="modal-overlay" id="authModal" style="display:none">
   <div class="modal">
-    <h2 id="authTitle">鐧诲綍</h2>
-    <div class="field"><label>閭</label><input type="email" id="authEmail" placeholder="your@email.com" autocomplete="email"></div>
-    <div class="field"><label>瀵嗙爜</label><input type="password" id="authPassword" placeholder="鑷冲皯6浣? autocomplete="current-password"></div>
+    <h2 id="authTitle">登录</h2>
+    <div class="field"><label>邮箱</label><input type="email" id="authEmail" placeholder="your@email.com" autocomplete="email"></div>
+    <div class="field"><label>密码</label><input type="password" id="authPassword" placeholder="至少6位" autocomplete="current-password"></div>
     <div class="error-msg" id="authError"></div>
     <div class="success-msg" id="authSuccess"></div>
     <div class="btn-row">
-      <button class="btn btn-ghost" onclick="hideAuthModal()">鍙栨秷</button>
-      <button class="btn btn-primary" id="authSubmitBtn" onclick="handleAuth()">鐧诲綍</button>
+      <button class="btn btn-ghost" onclick="hideAuthModal()">取消</button>
+      <button class="btn btn-primary" id="authSubmitBtn" onclick="handleAuth()">登录</button>
     </div>
-    <div class="switch-link" id="authSwitch">
-      娌℃湁璐﹀彿锛?a onclick="switchAuthMode()">娉ㄥ唽</a>
-    </div>
+    <div class="switch-link" id="authSwitch">没有账号？<a onclick="switchAuthMode()">注册</a></div>
   </div>
 </div>
-
 <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2/dist/umd/supabase.min.js"></script>
-<script src="鑰冪爺鑻辫浜宊璇嶆眹鏁版嵁.js"></script>
+<script src="考研英语二_词汇数据.js"></script>
 <script>
-// PWA Manifest & Service Worker
-(function() {
-  var manifest = { name:'鑰冪爺鑻辫浜?鑹惧娴╂柉鑳岃', short_name:'鑰冪爺璇嶆眹', start_url:'.', display:'standalone', background_color:'#0f0f1a', theme_color:'#0f0f1a', orientation:'portrait', icons:[{src:'data:image/svg+xml,'+encodeURIComponent('<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 192 192"><rect width="192" height="192" rx="32" fill="#6366f1"/><text x="96" y="120" text-anchor="middle" font-size="100" fill="white">A</text></svg>'),sizes:'192x192',type:'image/svg+xml'}] };
-  var mb = new Blob([JSON.stringify(manifest)], {type:'application/json'});
-  var link = document.createElement('link'); link.rel='manifest'; link.href=URL.createObjectURL(mb);
-  document.head.appendChild(link);
+var SUPABASE_URL='https://cebyephftzfrqzklksqt.supabase.co';
+var SUPABASE_KEY='sb_publishable_c18VHm3aKhyMRPOo1atSpg_E0ul-MoX';
+var supabase=window.supabase.createClient(SUPABASE_URL,SUPABASE_KEY);
+var WORDS=(typeof WORD_DATA!=='undefined'?WORD_DATA:[]).map(function(w,i){return{id:i+1,english:w[0],chinese:w[1],tier:w[2]};});
+var TOTAL=WORDS.length;
+var INTERVALS=[1,2,4,7,15];
+var MAX_STAGE=6;
+var currentDay=1,newWordsPerDay=94,wordStates={},dailySession=[],sessionIndex=0;
+var isFlipped=false,isAnimating=false,syncTimer=null;
+var currentFilter='study',browseIndex=0,browseList=WORDS.slice();
+var autoSpeak=true;
+var authMode='login';
 
-  if ('serviceWorker' in navigator) {
-    var swCode = 'var CACHE="ky2027-v1";var FILES=[self.location.href.replace(/\\/[^/]*$/,"/鑰冪爺鑻辫浜宊璇嶆眹鏁版嵁.js")];self.addEventListener("install",function(e){e.waitUntil(caches.open(CACHE).then(function(c){return c.addAll(FILES)}))});self.addEventListener("fetch",function(e){if(e.request.method!=="GET")return;e.respondWith(caches.match(e.request).then(function(r){return r||fetch(e.request).then(function(r2){if(r2.ok){var r3=r2.clone();caches.open(CACHE).then(function(c){c.put(e.request,r3)});}return r2;})}))});';
-    var swb = new Blob([swCode], {type:'application/javascript'});
-    navigator.serviceWorker.register(URL.createObjectURL(swb), {scope:'./'}).catch(function(){});
-  }
-})();
-
-var SUPABASE_URL = 'https://cebyephftzfrqzklksqt.supabase.co';
-var SUPABASE_KEY = 'sb_publishable_c18VHm3aKhyMRPOo1atSpg_E0ul-MoX';
-var supabase = window.supabase.createClient(SUPABASE_URL, SUPABASE_KEY);
-
-var WORDS = (typeof WORD_DATA !== 'undefined' ? WORD_DATA : []).map(function(w, i) {
-  return { id: i + 1, english: w[0], chinese: w[1], tier: w[2] };
-});
-var TOTAL = WORDS.length;
-var INTERVALS = [1, 2, 4, 7, 15];
-var MAX_STAGE = 6;
-
-var currentDay = 1;
-var newWordsPerDay = 94;
-var wordStates = {};
-var dailySession = [];
-var sessionIndex = 0;
-var isFlipped = false;
-var isAnimating = false;
-var syncTimer = null;
-var currentFilter = 'study';
-var browseIndex = 0;
-var browseList = WORDS.slice();
-var autoSpeak = true;
-
-function speakWord() {
-  var word = '';
-  if (currentFilter === 'study') {
-    var sw = getSessionWord();
-    if (sw) word = sw.word.english;
-  } else {
-    if (browseList.length > 0) word = browseList[browseIndex].english;
-  }
-  if (!word) return;
+function speakWord(){
+  var w='';
+  if(currentFilter==='study'){var sw=getSessionWord();if(sw)w=sw.word.english;}
+  else if(browseList.length>0)w=browseList[browseIndex].english;
+  if(!w)return;
   window.speechSynthesis.cancel();
-  var u = new SpeechSynthesisUtterance(word);
-  u.lang = 'en-US';
-  u.rate = 0.82;
-  u.pitch = 1;
-  var btn = document.getElementById('speakerBtn');
-  var btn2 = document.getElementById('speakerBtn2');
-  btn.classList.add('speaking'); btn2.classList.add('speaking');
-  u.onend = function() { btn.classList.remove('speaking'); btn2.classList.remove('speaking'); };
-  u.onerror = function() { btn.classList.remove('speaking'); btn2.classList.remove('speaking'); };
+  var u=new SpeechSynthesisUtterance(w);u.lang='en-US';u.rate=0.82;u.pitch=1;
+  var b1=document.getElementById('speakerBtn'),b2=document.getElementById('speakerBtn2');
+  b1.classList.add('speaking');b2.classList.add('speaking');
+  u.onend=u.onerror=function(){b1.classList.remove('speaking');b2.classList.remove('speaking');};
   window.speechSynthesis.speak(u);
 }
+function autoPronounce(){if(!autoSpeak)return;setTimeout(speakWord,200);}
 
-function autoPronounce() {
-  if (!autoSpeak) return;
-  setTimeout(function() { speakWord(); }, 200);
+function loadLocal(){
+  try{var r=localStorage.getItem('ky2027_ebbing_v2');if(r){var d=JSON.parse(r);currentDay=d.day||1;newWordsPerDay=d.perDay||94;wordStates=d.states||{};if(d.mastered)d.mastered.forEach(function(id){wordStates[id]=[MAX_STAGE,0];});}}catch(e){}
+  if(newWordsPerDay<1)newWordsPerDay=94;
+}
+function saveLocal(){
+  try{var ip={},m=[];Object.keys(wordStates).forEach(function(id){var s=wordStates[id];if(s[0]>0&&s[0]<MAX_STAGE)ip[id]=s;if(s[0]>=MAX_STAGE)m.push(parseInt(id));});localStorage.setItem('ky2027_ebbing_v2',JSON.stringify({day:currentDay,perDay:newWordsPerDay,states:ip,mastered:m}));}catch(e){}
 }
 
-function loadLocal() {
-  try {
-    var raw = localStorage.getItem('ky2027_ebbing_v2');
-    if (raw) {
-      var data = JSON.parse(raw);
-      currentDay = data.day || 1;
-      newWordsPerDay = data.perDay || 94;
-      wordStates = data.states || {};
-      if (data.mastered) data.mastered.forEach(function(id) { wordStates[id] = [MAX_STAGE, 0]; });
-    }
-  } catch(e) {}
-  if (newWordsPerDay < 1) newWordsPerDay = 94;
-}
-
-function saveLocal() {
-  try {
-    var inProgress = {}; var mastered = [];
-    Object.keys(wordStates).forEach(function(id) {
-      var s = wordStates[id];
-      if (s[0] > 0 && s[0] < MAX_STAGE) inProgress[id] = s;
-      if (s[0] >= MAX_STAGE) mastered.push(parseInt(id));
-    });
-    localStorage.setItem('ky2027_ebbing_v2', JSON.stringify({ day: currentDay, perDay: newWordsPerDay, states: inProgress, mastered: mastered }));
-  } catch(e) {}
-}
-
-async function loadFromSupabase() {
-  var u = (await supabase.auth.getUser()).data.user;
-  if (!u) return null;
-  var r = await supabase.from('user_progress').select('ebbinghaus').eq('user_id', u.id).maybeSingle();
-  if (r.error || !r.data || !r.data.ebbinghaus) return null;
+async function loadFromSupabase(){
+  var u=(await supabase.auth.getUser()).data.user;if(!u)return null;
+  var r=await supabase.from('user_progress').select('ebbinghaus').eq('user_id',u.id).maybeSingle();
+  if(r.error||!r.data||!r.data.ebbinghaus)return null;
   return r.data.ebbinghaus;
 }
-
-async function saveToSupabase() {
-  var u = (await supabase.auth.getUser()).data.user;
-  if (!u) return;
-  var inProgress = {}; var mastered = [];
-  Object.keys(wordStates).forEach(function(id) {
-    var s = wordStates[id];
-    if (s[0] > 0 && s[0] < MAX_STAGE) inProgress[id] = s;
-    if (s[0] >= MAX_STAGE) mastered.push(parseInt(id));
-  });
-  await supabase.from('user_progress').upsert({
-    user_id: u.id,
-    ebbinghaus: { day: currentDay, perDay: newWordsPerDay, states: inProgress, mastered: mastered },
-    updated_at: new Date().toISOString()
-  }, { onConflict: 'user_id' });
+async function saveToSupabase(){
+  var u=(await supabase.auth.getUser()).data.user;if(!u)return;
+  var ip={},m=[];Object.keys(wordStates).forEach(function(id){var s=wordStates[id];if(s[0]>0&&s[0]<MAX_STAGE)ip[id]=s;if(s[0]>=MAX_STAGE)m.push(parseInt(id));});
+  await supabase.from('user_progress').upsert({user_id:u.id,ebbinghaus:{day:currentDay,perDay:newWordsPerDay,states:ip,mastered:m},updated_at:new Date().toISOString()},{onConflict:'user_id'});
 }
+function debounceSync(){if(syncTimer)clearTimeout(syncTimer);syncTimer=setTimeout(function(){saveLocal();saveToSupabase();updateStats();},400);}
 
-function debounceSync() {
-  if (syncTimer) clearTimeout(syncTimer);
-  syncTimer = setTimeout(function() { saveLocal(); saveToSupabase(); updateStats(); }, 400);
+function getWordState(wid){return wordStates[wid]?{stage:wordStates[wid][0],nextReview:wordStates[wid][1]}:{stage:0,nextReview:0};}
+function setWordState(wid,stage,nr){wordStates[wid]=[stage,nr];}
+function isMastered(wid){return getWordState(wid).stage>=MAX_STAGE;}
+function getMasteredCount(){var c=0;Object.keys(wordStates).forEach(function(id){if(wordStates[id][0]>=MAX_STAGE)c++;});return c;}
+
+function calcDailySession(){
+  dailySession=[];
+  var sId=(currentDay-1)*newWordsPerDay+1,eId=Math.min(currentDay*newWordsPerDay,TOTAL);
+  for(var wid=sId;wid<=eId;wid++){var st=getWordState(wid);if(st.stage===0)dailySession.push({word:WORDS[wid-1],type:'new',stage:0,id:wid});}
+  Object.keys(wordStates).forEach(function(wid){var st=wordStates[wid];var id=parseInt(wid);if(st[0]>0&&st[0]<MAX_STAGE&&st[1]<=currentDay){if(id<sId||id>eId||getWordState(id).stage>0){if(!dailySession.some(function(s){return s.id===id;}))dailySession.push({word:WORDS[id-1],type:'review',stage:st[0],id:id});}}});
+  sessionIndex=0;
 }
+function getSessionWord(){return dailySession.length>0&&sessionIndex<dailySession.length?dailySession[sessionIndex]:null;}
 
-function getWordState(wid) { return wordStates[wid] ? { stage: wordStates[wid][0], nextReview: wordStates[wid][1] } : { stage: 0, nextReview: 0 }; }
-function setWordState(wid, stage, nextReview) { wordStates[wid] = [stage, nextReview]; }
-function isMastered(wid) { return getWordState(wid).stage >= MAX_STAGE; }
-function getMasteredCount() {
-  var c = 0;
-  Object.keys(wordStates).forEach(function(id) { if (wordStates[id][0] >= MAX_STAGE) c++; });
-  return c;
-}
-
-function calcDailySession() {
-  dailySession = [];
-  var startId = (currentDay - 1) * newWordsPerDay + 1;
-  var endId = Math.min(currentDay * newWordsPerDay, TOTAL);
-  for (var wid = startId; wid <= endId; wid++) {
-    var st = getWordState(wid);
-    if (st.stage === 0) dailySession.push({ word: WORDS[wid - 1], type: 'new', stage: 0, id: wid });
+function updateStudyCard(){
+  var sw=getSessionWord(),card=document.getElementById('card');
+  if(!sw){
+    document.getElementById('engWord').textContent='🎉';
+    document.getElementById('chnWord').textContent='今日任务全部完成！可以进入下一天浏览。';
+    document.getElementById('wordIdx').textContent='';document.getElementById('tierBadge').textContent='';document.getElementById('tierBadge2').textContent='';
+    document.getElementById('engWordSm').textContent='';document.getElementById('cardCounter').textContent=(sessionIndex+1)+' / '+dailySession.length;
+    document.getElementById('stageTag').textContent='';document.getElementById('stageTag').className='stage-badge';
+    card.classList.remove('flipped');isFlipped=false;updateNavButtons();return;
   }
-  Object.keys(wordStates).forEach(function(wid) {
-    var st = wordStates[wid];
-    var id = parseInt(wid);
-    if (st[0] > 0 && st[0] < MAX_STAGE && st[1] <= currentDay) {
-      if (id < startId || id > endId || getWordState(id).stage > 0) {
-        if (!dailySession.some(function(s) { return s.id === id; }))
-          dailySession.push({ word: WORDS[id - 1], type: 'review', stage: st[0], id: id });
-      }
-    }
-  });
-  sessionIndex = 0;
+  var w=sw.word,tp=w.tier;
+  var tl={1:'高频核心',2:'重点词汇',3:'基础词汇'};
+  card.classList.remove('flipped','flash-green','flash-red','slide-left','slide-right');isFlipped=false;
+  document.getElementById('engWord').textContent=w.english;document.getElementById('chnWord').textContent=w.chinese;
+  document.getElementById('engWordSm').textContent=w.english;document.getElementById('wordIdx').textContent='#'+(sessionIndex+1);
+  var tb=document.getElementById('tierBadge');tb.textContent='T'+tp+' '+(tl[tp]||'');tb.className='tier-badge t'+tp;
+  document.getElementById('tierBadge2').textContent=tb.textContent;document.getElementById('tierBadge2').className='tier-badge t'+tp;
+  document.getElementById('cardCounter').textContent=(sessionIndex+1)+' / '+dailySession.length;
+  var stag=document.getElementById('stageTag');
+  if(sw.type==='new'){stag.textContent='新词 S0';stag.className='stage-badge new';}
+  else{stag.textContent='复习 S'+sw.stage;stag.className='stage-badge review';}
+  updateNavButtons();autoPronounce();
+}
+function updateNavButtons(){
+  document.getElementById('prevBtn').disabled=sessionIndex<=0;
+  document.getElementById('nextBtn').disabled=sessionIndex>=dailySession.length-1;
 }
 
-function getSessionWord() { return dailySession.length > 0 && sessionIndex < dailySession.length ? dailySession[sessionIndex] : null; }
-
-function updateStudyCard() {
-  var sw = getSessionWord();
-  var card = document.getElementById('card');
-  if (!sw) {
-    document.getElementById('engWord').textContent = '馃帀';
-    document.getElementById('chnWord').textContent = '浠婃棩浠诲姟鍏ㄩ儴瀹屾垚锛乗n鍙互杩涘叆涓嬩竴澶╋紝鎴栨祻瑙堝叾浠栨棩鏈熴€?;
-    document.getElementById('wordIdx').textContent = '';
-    document.getElementById('tierBadge').textContent = ''; document.getElementById('tierBadge2').textContent = '';
-    document.getElementById('engWordSm').textContent = '';
-    document.getElementById('cardCounter').textContent = (sessionIndex + 1) + ' / ' + dailySession.length;
-    document.getElementById('stageTag').textContent = ''; document.getElementById('stageTag').className = 'stage-badge';
-    card.classList.remove('flipped'); isFlipped = false; updateNavButtons(); return;
-  }
-  var w = sw.word; var tp = w.tier;
-  var tierLabels = {1: '楂橀鏍稿績', 2: '閲嶇偣璇嶆眹', 3: '鍩虹璇嶆眹'};
-  card.classList.remove('flipped', 'flash-green', 'flash-red', 'slide-left', 'slide-right');
-  isFlipped = false;
-  document.getElementById('engWord').textContent = w.english;
-  document.getElementById('chnWord').textContent = w.chinese;
-  document.getElementById('engWordSm').textContent = w.english;
-  document.getElementById('wordIdx').textContent = '#' + (sessionIndex + 1);
-  var tb = document.getElementById('tierBadge'); tb.textContent = 'T' + tp + ' ' + (tierLabels[tp] || ''); tb.className = 'tier-badge t' + tp;
-  document.getElementById('tierBadge2').textContent = tb.textContent; document.getElementById('tierBadge2').className = 'tier-badge t' + tp;
-  document.getElementById('cardCounter').textContent = (sessionIndex + 1) + ' / ' + dailySession.length;
-  var stag = document.getElementById('stageTag');
-  if (sw.type === 'new') { stag.textContent = '鏂拌瘝 S0'; stag.className = 'stage-badge new'; }
-  else { stag.textContent = '澶嶄範 S' + sw.stage; stag.className = 'stage-badge review'; }
-  updateNavButtons();
-  autoPronounce();
+function flipCard(){
+  if(isAnimating)return;
+  if(currentFilter==='study'&&!getSessionWord())return;
+  if(currentFilter!=='study'&&browseList.length===0)return;
+  isFlipped=!isFlipped;document.getElementById('card').classList.toggle('flipped',isFlipped);
 }
 
-function updateNavButtons() {
-  document.getElementById('prevBtn').disabled = sessionIndex <= 0;
-  document.getElementById('nextBtn').disabled = sessionIndex >= dailySession.length - 1;
-}
-
-function flipCard() {
-  if (isAnimating) return;
-  if (currentFilter === 'study' && !getSessionWord()) return;
-  if (currentFilter !== 'study' && browseList.length === 0) return;
-  isFlipped = !isFlipped; document.getElementById('card').classList.toggle('flipped', isFlipped);
-}
-
-function markKnown() {
-  if (isAnimating) return;
-  if (currentFilter !== 'study') return;
-  var sw = getSessionWord(); if (!sw) return;
-  isAnimating = true;
-  var ns, nr;
-  if (sw.stage >= MAX_STAGE) { ns = MAX_STAGE; nr = 0; }
-  else if (sw.stage === 0) { ns = 1; nr = currentDay + 1; }
-  else { ns = sw.stage + 1; nr = ns < MAX_STAGE ? currentDay + INTERVALS[ns - 1] : 0; }
-  setWordState(sw.id, ns, nr);
-  debounceSync();
-  var card = document.getElementById('card'); if (isFlipped) { card.classList.remove('flipped'); isFlipped = false; }
+function markKnown(){
+  if(isAnimating||currentFilter!=='study')return;
+  var sw=getSessionWord();if(!sw)return;
+  isAnimating=true;var ns,nr;
+  if(sw.stage>=MAX_STAGE){ns=MAX_STAGE;nr=0;}
+  else if(sw.stage===0){ns=1;nr=currentDay+1;}
+  else{ns=sw.stage+1;nr=ns<MAX_STAGE?currentDay+INTERVALS[ns-1]:0;}
+  setWordState(sw.id,ns,nr);debounceSync();
+  var card=document.getElementById('card');if(isFlipped){card.classList.remove('flipped');isFlipped=false;}
   card.classList.add('flash-green');
-  setTimeout(function() { card.classList.remove('flash-green'); advanceSession(); isAnimating = false; }, 350);
+  setTimeout(function(){card.classList.remove('flash-green');advanceSession();isAnimating=false;},350);
 }
-
-function markUnknown() {
-  if (isAnimating) return;
-  if (currentFilter !== 'study') return;
-  var sw = getSessionWord(); if (!sw) return;
-  isAnimating = true;
-  setWordState(sw.id, 1, currentDay + 1);
-  debounceSync();
-  var card = document.getElementById('card'); if (isFlipped) { card.classList.remove('flipped'); isFlipped = false; }
+function markUnknown(){
+  if(isAnimating||currentFilter!=='study')return;
+  var sw=getSessionWord();if(!sw)return;
+  isAnimating=true;setWordState(sw.id,1,currentDay+1);debounceSync();
+  var card=document.getElementById('card');if(isFlipped){card.classList.remove('flipped');isFlipped=false;}
   card.classList.add('flash-red');
-  setTimeout(function() { card.classList.remove('flash-red'); advanceSession(); isAnimating = false; }, 350);
+  setTimeout(function(){card.classList.remove('flash-red');advanceSession();isAnimating=false;},350);
+}
+function advanceSession(){
+  if(sessionIndex<dailySession.length-1){sessionIndex++;updateStudyCard();updatePanelCounts();}
+  else updatePanelCounts();
 }
 
-function advanceSession() {
-  if (sessionIndex < dailySession.length - 1) { sessionIndex++; updateStudyCard(); updatePanelCounts(); }
-  else { updatePanelCounts(); }
+function nextWord(){
+  if(isAnimating)return;
+  if(currentFilter==='study'){if(sessionIndex>=dailySession.length-1)return;}
+  else{if(browseIndex>=browseList.length-1)return;}
+  var card=document.getElementById('card');if(isFlipped){card.classList.remove('flipped');isFlipped=false;}
+  isAnimating=true;card.classList.add('slide-left');
+  setTimeout(function(){card.classList.remove('slide-left');
+    if(currentFilter==='study'){sessionIndex++;updateStudyCard();updatePanelCounts();}
+    else{browseIndex++;updateBrowseCard();}
+    isAnimating=false;},300);
+}
+function prevWord(){
+  if(isAnimating)return;
+  if(currentFilter==='study'){if(sessionIndex<=0)return;}
+  else{if(browseIndex<=0)return;}
+  var card=document.getElementById('card');if(isFlipped){card.classList.remove('flipped');isFlipped=false;}
+  isAnimating=true;card.classList.add('slide-right');
+  setTimeout(function(){card.classList.remove('slide-right');
+    if(currentFilter==='study'){sessionIndex--;updateStudyCard();updatePanelCounts();}
+    else{browseIndex--;updateBrowseCard();}
+    isAnimating=false;},300);
 }
 
-function nextWord() {
-  if (isAnimating) return;
-  if (currentFilter === 'study') { if (sessionIndex >= dailySession.length - 1) return; }
-  else { if (browseIndex >= browseList.length - 1) return; }
-  var card = document.getElementById('card'); if (isFlipped) { card.classList.remove('flipped'); isFlipped = false; }
-  isAnimating = true; card.classList.add('slide-left');
-  setTimeout(function() {
-    card.classList.remove('slide-left');
-    if (currentFilter === 'study') { sessionIndex++; updateStudyCard(); updatePanelCounts(); }
-    else { browseIndex++; updateBrowseCard(); }
-    isAnimating = false;
-  }, 300);
+function updateStats(){
+  var done=getMasteredCount();document.getElementById('doneNum').textContent=done;
+  document.getElementById('totalNum').textContent=TOTAL;
+  document.getElementById('progressFill').style.width=(TOTAL>0?Math.round(done/TOTAL*100):0)+'%';
 }
-
-function prevWord() {
-  if (isAnimating) return;
-  if (currentFilter === 'study') { if (sessionIndex <= 0) return; }
-  else { if (browseIndex <= 0) return; }
-  var card = document.getElementById('card'); if (isFlipped) { card.classList.remove('flipped'); isFlipped = false; }
-  isAnimating = true; card.classList.add('slide-right');
-  setTimeout(function() {
-    card.classList.remove('slide-right');
-    if (currentFilter === 'study') { sessionIndex--; updateStudyCard(); updatePanelCounts(); }
-    else { browseIndex--; updateBrowseCard(); }
-    isAnimating = false;
-  }, 300);
+function updatePanelCounts(){
+  var nc=0,rc=0;dailySession.forEach(function(sw){if(sw.type==='new')nc++;else rc++;});
+  document.getElementById('dayLabel').textContent='Day '+currentDay;
+  document.getElementById('newCount').textContent=nc;document.getElementById('reviewCount').textContent=rc;
+  document.getElementById('sessionDone').textContent=sessionIndex;
+  document.getElementById('newWordsInput').value=newWordsPerDay;
+  var eta=Math.ceil(TOTAL/newWordsPerDay);
+  document.getElementById('etaHint').textContent='预计 '+eta+' 天完成'+(eta>70?' ⚠️超70天':'');
 }
-
-function updateStats() {
-  var done = getMasteredCount();
-  document.getElementById('doneNum').textContent = done;
-  document.getElementById('totalNum').textContent = TOTAL;
-  var pct = TOTAL > 0 ? Math.round(done / TOTAL * 100) : 0;
-  document.getElementById('progressFill').style.width = pct + '%';
+function setDay(d){
+  if(d<1||d>Math.ceil(TOTAL/newWordsPerDay))return;
+  currentDay=d;sessionIndex=0;calcDailySession();updateStudyCard();updatePanelCounts();updateDayDots();updateStats();saveLocal();
 }
-
-function updatePanelCounts() {
-  var newC = 0, revC = 0;
-  dailySession.forEach(function(sw) { if (sw.type === 'new') newC++; else revC++; });
-  document.getElementById('dayLabel').textContent = 'Day ' + currentDay;
-  document.getElementById('newCount').textContent = newC;
-  document.getElementById('reviewCount').textContent = revC;
-  document.getElementById('sessionDone').textContent = sessionIndex;
-  document.getElementById('newWordsInput').value = newWordsPerDay;
-  var eta = Math.ceil(TOTAL / newWordsPerDay);
-  document.getElementById('etaHint').textContent = '棰勮 ' + eta + ' 澶╁畬鎴? + (eta > 70 ? ' 鈿狅笍 瓒?0澶? : '');
+function changeNewWordsPerDay(){
+  var v=parseInt(document.getElementById('newWordsInput').value);
+  if(isNaN(v)||v<1){document.getElementById('newWordsInput').value=newWordsPerDay;return;}
+  newWordsPerDay=v;sessionIndex=0;calcDailySession();updateStudyCard();updatePanelCounts();updateDayDots();updateStats();saveLocal();
 }
-
-function setDay(d) {
-  if (d < 1 || d > Math.ceil(TOTAL / newWordsPerDay)) return;
-  currentDay = d; sessionIndex = 0;
-  calcDailySession(); updateStudyCard(); updatePanelCounts(); updateDayDots(); updateStats(); saveLocal();
-}
-
-function changeNewWordsPerDay() {
-  var v = parseInt(document.getElementById('newWordsInput').value);
-  if (isNaN(v) || v < 1) { document.getElementById('newWordsInput').value = newWordsPerDay; return; }
-  newWordsPerDay = v; sessionIndex = 0;
-  calcDailySession(); updateStudyCard(); updatePanelCounts(); updateDayDots(); updateStats(); saveLocal();
-}
-
-function updateDayDots() {
-  var maxDay = Math.ceil(TOTAL / newWordsPerDay);
-  var cont = document.getElementById('dayNavDots'); if (!cont) return;
-  cont.innerHTML = '';
-  for (var d = 1; d <= maxDay; d++) {
-    var dot = document.createElement('button');
-    dot.className = 'day-nav-dot'; dot.textContent = d;
-    if (d === currentDay) { dot.classList.add('active'); dot.classList.add('today'); }
-    var sId = (d - 1) * newWordsPerDay + 1;
-    var eId = Math.min(d * newWordsPerDay, TOTAL);
-    var allNewDone = true;
-    for (var wid = sId; wid <= eId; wid++) { if (getWordState(wid).stage === 0) { allNewDone = false; break; } }
-    var hasReview = false;
-    Object.keys(wordStates).forEach(function(wid) {
-      var st = wordStates[wid];
-      if (st[0] > 0 && st[0] < MAX_STAGE && st[1] <= d) hasReview = true;
-    });
-    if (allNewDone && !hasReview) dot.classList.add('done');
-    else if (allNewDone) dot.classList.add('partial');
-    dot.onclick = (function(day) { return function() { setDay(day); };})(d);
+function updateDayDots(){
+  var md=Math.ceil(TOTAL/newWordsPerDay),cont=document.getElementById('dayNavDots');if(!cont)return;cont.innerHTML='';
+  for(var d=1;d<=md;d++){
+    var dot=document.createElement('button');dot.className='day-nav-dot';dot.textContent=d;
+    if(d===currentDay){dot.classList.add('active');dot.classList.add('today');}
+    var sId=(d-1)*newWordsPerDay+1,eId=Math.min(d*newWordsPerDay,TOTAL),allDone=true;
+    for(var wid=sId;wid<=eId;wid++){if(getWordState(wid).stage===0){allDone=false;break;}}
+    var hr=false;Object.keys(wordStates).forEach(function(wid){var st=wordStates[wid];if(st[0]>0&&st[0]<MAX_STAGE&&st[1]<=d)hr=true;});
+    if(allDone&&!hr)dot.classList.add('done');else if(allDone)dot.classList.add('partial');
+    dot.onclick=(function(day){return function(){setDay(day);};})(d);
     cont.appendChild(dot);
   }
 }
-
-function setFilter(f) {
-  currentFilter = f;
-  document.querySelectorAll('.filter-btn').forEach(function(b) { b.classList.remove('active'); });
-  var isStudy = (f === 'study');
-  var btn = isStudy ? document.getElementById('studyBtn') : document.querySelector('.filter-btn[data-filter="' + f + '"]');
-  if (btn) btn.classList.add('active');
-  document.getElementById('dayPanelWrap').style.display = isStudy ? 'block' : 'none';
-  if (!isStudy) {
-    var mset = new Set();
-    Object.keys(wordStates).forEach(function(id) { if (wordStates[id][0] >= MAX_STAGE) mset.add(parseInt(id)); });
-    if (f === 'all') browseList = WORDS;
-    else if (f === 't1') browseList = WORDS.filter(function(w) { return w.tier === 1; });
-    else if (f === 't2') browseList = WORDS.filter(function(w) { return w.tier === 2; });
-    else if (f === 't3') browseList = WORDS.filter(function(w) { return w.tier === 3; });
-    else if (f === 'unmastered') browseList = WORDS.filter(function(w) { return !mset.has(w.id); });
-    browseIndex = 0;
-    updateBrowseCard();
-    updateStats();
-  } else {
-    sessionIndex = 0;
-    calcDailySession();
-    updateStudyCard();
-    updatePanelCounts();
-    updateDayDots();
-    updateStats();
-  }
+function setFilter(f){
+  currentFilter=f;
+  document.querySelectorAll('.filter-btn').forEach(function(b){b.classList.remove('active');});
+  var isStudy=(f==='study'),btn=isStudy?document.getElementById('studyBtn'):document.querySelector('.filter-btn[data-filter="'+f+'"]');
+  if(btn)btn.classList.add('active');
+  document.getElementById('dayPanelWrap').style.display=isStudy?'block':'none';
+  if(!isStudy){
+    var ms=new Set();Object.keys(wordStates).forEach(function(id){if(wordStates[id][0]>=MAX_STAGE)ms.add(parseInt(id));});
+    if(f==='all')browseList=WORDS;
+    else if(f==='t1')browseList=WORDS.filter(function(w){return w.tier===1;});
+    else if(f==='t2')browseList=WORDS.filter(function(w){return w.tier===2;});
+    else if(f==='t3')browseList=WORDS.filter(function(w){return w.tier===3;});
+    else if(f==='unmastered')browseList=WORDS.filter(function(w){return!ms.has(w.id);});
+    browseIndex=0;updateBrowseCard();updateStats();
+  }else{sessionIndex=0;calcDailySession();updateStudyCard();updatePanelCounts();updateDayDots();updateStats();}
 }
-
-function updateBrowseCard() {
-  var w = browseList.length > 0 ? browseList[browseIndex] : null;
-  var card = document.getElementById('card');
-  card.classList.remove('flipped', 'flash-green', 'flash-red', 'slide-left', 'slide-right');
-  isFlipped = false;
-  if (!w) {
-    document.getElementById('engWord').textContent = '鈥?;
-    document.getElementById('chnWord').textContent = '娌℃湁鍗曡瘝';
-    document.getElementById('wordIdx').textContent = '';
-    document.getElementById('tierBadge').textContent = ''; document.getElementById('tierBadge2').textContent = '';
-    document.getElementById('engWordSm').textContent = '';
-    document.getElementById('cardCounter').textContent = '0 / 0';
-    document.getElementById('stageTag').textContent = ''; document.getElementById('stageTag').className = 'stage-badge';
-    document.getElementById('prevBtn').disabled = true;
-    document.getElementById('nextBtn').disabled = true;
-    return;
+function updateBrowseCard(){
+  var w=browseList.length>0?browseList[browseIndex]:null,card=document.getElementById('card');
+  card.classList.remove('flipped','flash-green','flash-red','slide-left','slide-right');isFlipped=false;
+  if(!w){
+    document.getElementById('engWord').textContent='—';document.getElementById('chnWord').textContent='没有单词';
+    document.getElementById('wordIdx').textContent='';document.getElementById('tierBadge').textContent='';document.getElementById('tierBadge2').textContent='';
+    document.getElementById('engWordSm').textContent='';document.getElementById('cardCounter').textContent='0 / 0';
+    document.getElementById('stageTag').textContent='';document.getElementById('stageTag').className='stage-badge';
+    document.getElementById('prevBtn').disabled=true;document.getElementById('nextBtn').disabled=true;return;
   }
-  var tp = w.tier;
-  var tierLabels = {1: '楂橀鏍稿績', 2: '閲嶇偣璇嶆眹', 3: '鍩虹璇嶆眹'};
-  document.getElementById('engWord').textContent = w.english;
-  document.getElementById('chnWord').textContent = w.chinese;
-  document.getElementById('engWordSm').textContent = w.english;
-  document.getElementById('wordIdx').textContent = '#' + (browseIndex + 1);
-  var tb = document.getElementById('tierBadge'); tb.textContent = 'T' + tp + ' ' + (tierLabels[tp] || ''); tb.className = 'tier-badge t' + tp;
-  document.getElementById('tierBadge2').textContent = tb.textContent; document.getElementById('tierBadge2').className = 'tier-badge t' + tp;
-  document.getElementById('cardCounter').textContent = (browseIndex + 1) + ' / ' + browseList.length;
-  var st = getWordState(w.id);
-  var stag = document.getElementById('stageTag');
-  if (st.stage === 0) { stag.textContent = '鏈紑濮?; stag.className = 'stage-badge'; }
-  else if (st.stage >= MAX_STAGE) { stag.textContent = '宸叉帉鎻?; stag.className = 'stage-badge mastered'; }
-  else { stag.textContent = 'S' + st.stage + ' 澶嶄範鏃' + st.nextReview; stag.className = 'stage-badge review'; }
-  document.getElementById('prevBtn').disabled = browseIndex <= 0;
-  document.getElementById('nextBtn').disabled = browseIndex >= browseList.length - 1;
+  var tp=w.tier,tl={1:'高频核心',2:'重点词汇',3:'基础词汇'};
+  document.getElementById('engWord').textContent=w.english;document.getElementById('chnWord').textContent=w.chinese;
+  document.getElementById('engWordSm').textContent=w.english;document.getElementById('wordIdx').textContent='#'+(browseIndex+1);
+  var tb=document.getElementById('tierBadge');tb.textContent='T'+tp+' '+(tl[tp]||'');tb.className='tier-badge t'+tp;
+  document.getElementById('tierBadge2').textContent=tb.textContent;document.getElementById('tierBadge2').className='tier-badge t'+tp;
+  document.getElementById('cardCounter').textContent=(browseIndex+1)+' / '+browseList.length;
+  var st=getWordState(w.id),stag=document.getElementById('stageTag');
+  if(st.stage===0){stag.textContent='未开始';stag.className='stage-badge';}
+  else if(st.stage>=MAX_STAGE){stag.textContent='已掌握';stag.className='stage-badge mastered';}
+  else{stag.textContent='S'+st.stage+' 复习日D'+st.nextReview;stag.className='stage-badge review';}
+  document.getElementById('prevBtn').disabled=browseIndex<=0;document.getElementById('nextBtn').disabled=browseIndex>=browseList.length-1;
   autoPronounce();
 }
-
-function resetProgress() {
-  if (confirm('纭畾瑕佹竻闄ゅ叏閮ㄨ壘瀹炬旦鏂儗璇佃繘搴﹀悧锛熸鎿嶄綔涓嶅彲鎭㈠锛?)) {
-    wordStates = {}; currentDay = 1; newWordsPerDay = 94; sessionIndex = 0; browseIndex = 0;
-    saveLocal(); saveToSupabase();
-    if (currentFilter === 'study') { calcDailySession(); updateStudyCard(); updatePanelCounts(); updateDayDots(); }
+function resetProgress(){
+  if(confirm('确定要清除全部背诵进度吗？此操作不可恢复！')){
+    wordStates={};currentDay=1;newWordsPerDay=94;sessionIndex=0;browseIndex=0;saveLocal();saveToSupabase();
+    if(currentFilter==='study'){calcDailySession();updateStudyCard();updatePanelCounts();updateDayDots();}
     else setFilter(currentFilter);
     updateStats();
   }
 }
-
-function exportProgress() {
-  var date = new Date().toISOString().slice(0, 10);
-  var stages = {0:'鏈紑濮?, 1:'1澶╁悗澶嶄範', 2:'2澶╁悗澶嶄範', 3:'4澶╁悗澶嶄範', 4:'7澶╁悗澶嶄範', 5:'15澶╁悗澶嶄範', 6:'宸叉帉鎻?};
-  var cnt = [0,0,0,0,0,0,0];
-  WORDS.forEach(function(w) { var st = getWordState(w.id); cnt[Math.min(st.stage, 6)]++; });
-  var mcnt = getMasteredCount();
-  var r = '2027鑰冪爺鑻辫浜?鑹惧娴╂柉鑳岃杩涘害鎶ュ憡\n瀵煎嚭鏃ユ湡: ' + date + '\n褰撳墠: Day ' + currentDay + '  姣忔棩鏂拌瘝: ' + newWordsPerDay + '\n宸叉帉鎻? ' + mcnt + ' / ' + TOTAL + ' (' + Math.round(mcnt/TOTAL*100) + '%)\n\n';
-  for (var i = 0; i <= 6; i++) r += '  ' + stages[i] + ': ' + cnt[i] + '璇峔n';
-  [1,2,3].forEach(function(t) {
-    var nm = WORDS.filter(function(w) { return w.tier === t && isMastered(w.id); }).length;
-    var nt = WORDS.filter(function(w) { return w.tier === t; }).length;
-    var labels = {1:'楂橀鏍稿績', 2:'閲嶇偣璇嶆眹', 3:'鍩虹璇嶆眹'};
-    r += '\n' + labels[t] + ': ' + nm + ' / ' + nt + ' (' + Math.round(nm/nt*100) + '%)\n';
-  });
-  var b = new Blob([r], {type: 'text/plain;charset=utf-8'});
-  var u = URL.createObjectURL(b); var a = document.createElement('a');
-  a.href = u; a.download = '鑰冪爺鑻辫浜宊鑹惧娴╂柉杩涘害_' + date + '.txt'; a.click();
-  URL.revokeObjectURL(u);
+function exportProgress(){
+  var date=new Date().toISOString().slice(0,10),stages={0:'未开始',1:'1天后复习',2:'2天后复习',3:'4天后复习',4:'7天后复习',5:'15天后复习',6:'已掌握'};
+  var cnt=[0,0,0,0,0,0,0];WORDS.forEach(function(w){var st=getWordState(w.id);cnt[Math.min(st.stage,6)]++;});
+  var mc=getMasteredCount(),r='2027考研英语二 艾宾浩斯背诵进度报告\n导出日期: '+date+'\n当前: Day '+currentDay+'  每日新词: '+newWordsPerDay+'\n已掌握: '+mc+' / '+TOTAL+' ('+Math.round(mc/TOTAL*100)+'%)\n\n';
+  for(var i=0;i<=6;i++)r+='  '+stages[i]+': '+cnt[i]+'词\n';
+  [1,2,3].forEach(function(t){var nm=WORDS.filter(function(w){return w.tier===t&&isMastered(w.id);}).length;var nt=WORDS.filter(function(w){return w.tier===t;}).length;var lb={1:'高频核心',2:'重点词汇',3:'基础词汇'};r+='\n'+lb[t]+': '+nm+' / '+nt+' ('+Math.round(nm/nt*100)+'%)\n';});
+  var b=new Blob([r],{type:'text/plain;charset=utf-8'});var u=URL.createObjectURL(b);var a=document.createElement('a');a.href=u;a.download='考研英语二_艾宾浩斯进度_'+date+'.txt';a.click();URL.revokeObjectURL(u);
 }
 
-var authMode = 'login';
-function showAuthModal(mode) {
-  authMode = mode;
-  document.getElementById('authTitle').textContent = mode === 'login' ? '鐧诲綍' : '娉ㄥ唽';
-  document.getElementById('authSubmitBtn').textContent = mode === 'login' ? '鐧诲綍' : '娉ㄥ唽';
-  document.getElementById('authSwitch').innerHTML = mode === 'login' ? '娌℃湁璐﹀彿锛?a onclick="switchAuthMode()">娉ㄥ唽</a>' : '宸叉湁璐﹀彿锛?a onclick="switchAuthMode()">鐧诲綍</a>';
-  document.getElementById('authError').textContent = ''; document.getElementById('authSuccess').textContent = '';
-  document.getElementById('authEmail').value = ''; document.getElementById('authPassword').value = '';
-  document.getElementById('authModal').style.display = 'flex'; document.getElementById('authEmail').focus();
+function showAuthModal(m){
+  authMode=m;document.getElementById('authTitle').textContent=m==='login'?'登录':'注册';
+  document.getElementById('authSubmitBtn').textContent=m==='login'?'登录':'注册';
+  document.getElementById('authSwitch').innerHTML=m==='login'?'没有账号？<a onclick="switchAuthMode()">注册</a>':'已有账号？<a onclick="switchAuthMode()">登录</a>';
+  document.getElementById('authError').textContent='';document.getElementById('authSuccess').textContent='';
+  document.getElementById('authEmail').value='';document.getElementById('authPassword').value='';
+  document.getElementById('authModal').style.display='flex';document.getElementById('authEmail').focus();
 }
-function hideAuthModal() { document.getElementById('authModal').style.display = 'none'; }
-function switchAuthMode() { showAuthModal(authMode === 'login' ? 'signup' : 'login'); }
-
-async function handleAuth() {
-  var email = document.getElementById('authEmail').value.trim();
-  var pass = document.getElementById('authPassword').value;
-  var errEl = document.getElementById('authError'); var okEl = document.getElementById('authSuccess');
-  errEl.textContent = ''; okEl.textContent = '';
-  if (!email || !pass) { errEl.textContent = '璇峰～鍐欓偖绠卞拰瀵嗙爜'; return; }
-  if (pass.length < 6) { errEl.textContent = '瀵嗙爜鑷冲皯6浣?; return; }
-  try {
-    if (authMode === 'signup') {
-      var r = await supabase.auth.signUp({ email: email, password: pass });
-      if (r.error) { errEl.textContent = r.error.message; return; }
-      okEl.textContent = '娉ㄥ唽鎴愬姛锛佽妫€鏌ラ偖绠辩‘璁?;
-      setTimeout(function() { hideAuthModal(); }, 2000);
-    } else {
-      var r = await supabase.auth.signInWithPassword({ email: email, password: pass });
-      if (r.error) { errEl.textContent = r.error.message; return; }
-      hideAuthModal();
-    }
-  } catch(e) { errEl.textContent = '缃戠粶閿欒锛岃閲嶈瘯'; }
+function hideAuthModal(){document.getElementById('authModal').style.display='none';}
+function switchAuthMode(){showAuthModal(authMode==='login'?'signup':'login');}
+async function handleAuth(){
+  var em=document.getElementById('authEmail').value.trim(),pw=document.getElementById('authPassword').value;
+  var er=document.getElementById('authError'),ok=document.getElementById('authSuccess');er.textContent='';ok.textContent='';
+  if(!em||!pw){er.textContent='请填写邮箱和密码';return;}if(pw.length<6){er.textContent='密码至少6位';return;}
+  try{
+    if(authMode==='signup'){var r=await supabase.auth.signUp({email:em,password:pw});if(r.error){er.textContent=r.error.message;return;}ok.textContent='注册成功！请查邮箱确认';setTimeout(hideAuthModal,2000);}
+    else{var r=await supabase.auth.signInWithPassword({email:em,password:pw});if(r.error){er.textContent=r.error.message;return;}hideAuthModal();}
+  }catch(e){er.textContent='网络错误，请重试';}
 }
-
-async function logout() {
-  await supabase.auth.signOut();
-  wordStates = {}; currentDay = 1; sessionIndex = 0;
-  saveLocal(); calcDailySession(); updateStudyCard(); updatePanelCounts(); updateDayDots(); updateStats();
+async function logout(){
+  await supabase.auth.signOut();wordStates={};currentDay=1;sessionIndex=0;
+  saveLocal();calcDailySession();updateStudyCard();updatePanelCounts();updateDayDots();updateStats();
 }
-
-function updateUserUI(user) {
-  var el = document.getElementById('userInfo');
-  if (user && user.email) {
-    el.innerHTML = '<span class="sync-status">鈽侊笍 宸插悓姝?/span><span class="email">' + escHTML(user.email) + '</span><button class="btn btn-auth" onclick="logout()">閫€鍑?/button>';
-  } else {
-    el.innerHTML = '<button class="btn btn-auth" onclick="showAuthModal(\'login\')">馃摟 鐧诲綍鍚屾</button>';
-  }
+function updateUserUI(user){
+  var el=document.getElementById('userInfo');
+  if(user&&user.email)el.innerHTML='<span class="sync-status">☁️ 已同步</span><span class="email">'+escHTML(user.email)+'</span><button class="btn btn-auth" onclick="logout()">退出</button>';
+  else el.innerHTML='<button class="btn btn-auth" onclick="showAuthModal(\'login\')">📧 登录同步</button>';
 }
-function escHTML(s) { var d = document.createElement('div'); d.textContent = s; return d.innerHTML; }
+function escHTML(s){var d=document.createElement('div');d.textContent=s;return d.innerHTML;}
 
-async function syncOnLogin() {
-  var remote = await loadFromSupabase();
-  if (remote) {
-    if (remote.day > currentDay) currentDay = remote.day;
-    if (remote.perDay && remote.perDay > 0) newWordsPerDay = remote.perDay;
-    if (remote.states) {
-      Object.keys(remote.states).forEach(function(id) {
-        if (!wordStates[id] || wordStates[id][0] < remote.states[id][0]) wordStates[id] = remote.states[id];
-      });
-    }
-    if (remote.mastered) remote.mastered.forEach(function(id) { wordStates[id] = [MAX_STAGE, 0]; });
+async function syncOnLogin(){
+  var remote=await loadFromSupabase();
+  if(remote){
+    if(remote.day>currentDay)currentDay=remote.day;
+    if(remote.perDay&&remote.perDay>0)newWordsPerDay=remote.perDay;
+    if(remote.states)Object.keys(remote.states).forEach(function(id){if(!wordStates[id]||wordStates[id][0]<remote.states[id][0])wordStates[id]=remote.states[id];});
+    if(remote.mastered)remote.mastered.forEach(function(id){wordStates[id]=[MAX_STAGE,0];});
     saveLocal();
-  } else { await saveToSupabase(); }
-  calcDailySession(); updateStudyCard(); updatePanelCounts(); updateDayDots(); updateStats();
+  }else await saveToSupabase();
+  calcDailySession();updateStudyCard();updatePanelCounts();updateDayDots();updateStats();
 }
 
-document.addEventListener('keydown', function(e) {
-  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
-  if (currentFilter === 'study') {
-    switch (e.key) {
-      case ' ': case 'Enter': e.preventDefault(); flipCard(); break;
-      case 'ArrowRight': e.preventDefault(); nextWord(); break;
-      case 'ArrowLeft': e.preventDefault(); prevWord(); break;
-      case 'y': case 'Y': case 'ArrowUp': e.preventDefault(); markKnown(); break;
-      case 'n': case 'N': case 'ArrowDown': e.preventDefault(); markUnknown(); break;
-      case 'f': case 'F': e.preventDefault(); speakWord(); break;
-    }
-  } else {
-    switch (e.key) {
-      case ' ': case 'Enter': e.preventDefault(); flipCard(); break;
-      case 'ArrowRight': e.preventDefault(); if (browseIndex < browseList.length - 1) { browseIndex++; updateBrowseCard(); } break;
-      case 'ArrowLeft': e.preventDefault(); if (browseIndex > 0) { browseIndex--; updateBrowseCard(); } break;
-    }
+document.addEventListener('keydown',function(e){
+  if(e.target.tagName==='INPUT'||e.target.tagName==='TEXTAREA')return;
+  if(currentFilter==='study'){
+    switch(e.key){case' ':case'Enter':e.preventDefault();flipCard();break;case'ArrowRight':e.preventDefault();nextWord();break;case'ArrowLeft':e.preventDefault();prevWord();break;case'y':case'Y':case'ArrowUp':e.preventDefault();markKnown();break;case'n':case'N':case'ArrowDown':e.preventDefault();markUnknown();break;case'f':case'F':e.preventDefault();speakWord();break;}
+  }else{
+    switch(e.key){case' ':case'Enter':e.preventDefault();flipCard();break;case'ArrowRight':e.preventDefault();if(browseIndex<browseList.length-1){browseIndex++;updateBrowseCard();}break;case'ArrowLeft':e.preventDefault();if(browseIndex>0){browseIndex--;updateBrowseCard();}break;}
   }
 });
-
-document.getElementById('studyBtn').addEventListener('click', function() { setFilter('study'); });
-document.querySelectorAll('.filter-btn[data-filter]').forEach(function(b) {
-  b.addEventListener('click', function() { setFilter(this.dataset.filter); });
+document.getElementById('studyBtn').addEventListener('click',function(){setFilter('study');});
+document.querySelectorAll('.filter-btn[data-filter]').forEach(function(b){b.addEventListener('click',function(){setFilter(this.dataset.filter);});});
+supabase.auth.onAuthStateChange(async function(event,session){
+  if(event==='SIGNED_IN'&&session){updateUserUI(session.user);await syncOnLogin();}
+  else if(event==='SIGNED_OUT'){updateUserUI(null);}
 });
 
-supabase.auth.onAuthStateChange(async function(event, session) {
-  if (event === 'SIGNED_IN' && session) { updateUserUI(session.user); await syncOnLogin(); }
-  else if (event === 'SIGNED_OUT') { updateUserUI(null); }
-});
-
-async function init() {
-  loadLocal();
-  calcDailySession();
-  var user = (await supabase.auth.getUser()).data.user;
-  updateUserUI(user);
-  if (user) await syncOnLogin();
-  updateStudyCard(); updatePanelCounts(); updateDayDots(); updateStats();
+async function init(){
+  loadLocal();calcDailySession();
+  var user=(await supabase.auth.getUser()).data.user;updateUserUI(user);
+  if(user)await syncOnLogin();
+  updateStudyCard();updatePanelCounts();updateDayDots();updateStats();
 }
 init();
 
-window.speakWord = speakWord;
-window.exportProgress = exportProgress;
-window.resetProgress = resetProgress;
-window.setFilter = setFilter;
-window.flipCard = flipCard;
-window.nextWord = nextWord;
-window.prevWord = prevWord;
-window.markKnown = markKnown;
-window.markUnknown = markUnknown;
-window.changeNewWordsPerDay = changeNewWordsPerDay;
-window.showAuthModal = showAuthModal;
-window.hideAuthModal = hideAuthModal;
-window.switchAuthMode = switchAuthMode;
-window.handleAuth = handleAuth;
-window.logout = logout;
+window.speakWord=speakWord;window.exportProgress=exportProgress;window.resetProgress=resetProgress;
+window.setFilter=setFilter;window.flipCard=flipCard;window.nextWord=nextWord;
+window.prevWord=prevWord;window.markKnown=markKnown;window.markUnknown=markUnknown;
+window.changeNewWordsPerDay=changeNewWordsPerDay;window.showAuthModal=showAuthModal;
+window.hideAuthModal=hideAuthModal;window.switchAuthMode=switchAuthMode;
+window.handleAuth=handleAuth;window.logout=logout;
 </script>
 </body>
 </html>
